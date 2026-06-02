@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A premium role-based College Appointment Booking System for students and professors.">
+  <title>College Appointment System 🏫📅</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Main App Layout -->
+  <div id="app">
+    
+    <!-- Navigation Bar (Hidden when logged out) -->
+    <nav id="app-nav" class="navbar glass hide">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <i class="fa-solid fa-graduation-cap logo-icon"></i>
+          <span>CampusLink</span>
+        </div>
+        <div class="nav-user-panel">
+          <div class="user-info">
+            <span class="user-avatar" id="nav-avatar">U</span>
+            <div class="user-details">
+              <span id="nav-username" class="username">Guest</span>
+              <span id="nav-role" class="badge">Student</span>
+            </div>
+          </div>
+          <button id="btn-logout" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container">
+      
+      <!-- AUTHENTICATION VIEW -->
+      <section id="view-auth" class="auth-section">
+        <div class="auth-wrapper">
+          <div class="auth-header">
+            <div class="auth-logo">
+              <i class="fa-solid fa-calendar-check animate-bounce"></i>
+            </div>
+            <h1>College Appointment System</h1>
+            <p>Connect students and professors effortlessly</p>
+          </div>
+
+          <!-- Auth Card -->
+          <div class="card glass auth-card">
+            <!-- Tabs -->
+            <div class="auth-tabs">
+              <button id="tab-login" class="tab-btn active">Login</button>
+              <button id="tab-register" class="tab-btn">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="form-login" class="auth-form">
+              <div class="form-group">
+                <label for="login-username">Username</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-user input-icon"></i>
+                  <input type="text" id="login-username" required placeholder="Enter your username">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="login-password">Password</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-lock input-icon"></i>
+                  <input type="password" id="login-password" required placeholder="Enter your password">
+                </div>
+              </div>
+              <button type="submit" id="btn-login-submit" class="btn btn-primary btn-block">
+                <span>Sign In</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </form>
+
+            <!-- Register Form (Hidden by default) -->
+            <form id="form-register" class="auth-form hide">
+              <div class="form-group">
+                <label for="register-username">Username</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-user input-icon"></i>
+                  <input type="text" id="register-username" required placeholder="Choose a username">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="register-password">Password</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-lock input-icon"></i>
+                  <input type="password" id="register-password" required placeholder="Create a strong password">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Select Your Role</label>
+                <div class="role-selector">
+                  <label class="role-option">
+                    <input type="radio" name="register-role" value="student" checked>
+                    <div class="role-card">
+                      <i class="fa-solid fa-user-graduate"></i>
+                      <span>Student</span>
+                    </div>
+                  </label>
+                  <label class="role-option">
+                    <input type="radio" name="register-role" value="professor">
+                    <div class="role-card">
+                      <i class="fa-solid fa-chalkboard-user"></i>
+                      <span>Professor</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <button type="submit" id="btn-register-submit" class="btn btn-secondary btn-block">
+                <span>Create Account</span> <i class="fa-solid fa-user-plus"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENT DASHBOARD VIEW -->
+      <section id="view-student" class="dashboard-section hide">
+        <div class="grid grid-2">
+          
+          <!-- Column 1: Bookings & Professors -->
+          <div class="flex-column gap-lg">
+            
+            <!-- Book a New Appointment Card -->
+            <div class="card glass">
+              <div class="card-header">
+                <h2><i class="fa-solid fa-magnifying-glass"></i> Book an Appointment</h2>
+                <p>Select a professor and choose an available slot</p>
+              </div>
+              
+              <!-- Select Professor -->
+              <div class="form-group">
+                <label for="select-professor">Select Professor</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-user-tie input-icon"></i>
+                  <select id="select-professor">
+                    <option value="" disabled selected>Choose a professor...</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Available Slots List -->
+              <div id="slots-container-section" class="slots-section hide">
+                <label>Available Slots</label>
+                <div id="slots-grid" class="slots-grid">
+                  <!-- Dynamic slots populate here -->
+                </div>
+              </div>
+
+              <!-- Divider -->
+              <div id="custom-request-divider" class="custom-request-divider hide">
+                <span>OR</span>
+              </div>
+
+              <!-- Custom Slot Request Form -->
+              <div id="custom-request-section" class="custom-request-section hide">
+                <label>Request a Custom Time</label>
+                <form id="form-custom-request" style="margin-top: 0.5rem">
+                  <div class="grid grid-2 compact" style="margin-bottom: 0.75rem">
+                    <div class="form-group" style="margin-bottom: 0">
+                      <label for="custom-date">Date</label>
+                      <div class="input-wrapper">
+                        <i class="fa-solid fa-calendar-day input-icon"></i>
+                        <input type="date" id="custom-date" required>
+                      </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                      <label for="custom-time">Start Time</label>
+                      <div class="input-wrapper">
+                        <i class="fa-solid fa-clock input-icon"></i>
+                        <input type="time" id="custom-time" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0.75rem">
+                    <label for="custom-duration">Duration</label>
+                    <div class="input-wrapper">
+                      <i class="fa-solid fa-hourglass-half input-icon"></i>
+                      <select id="custom-duration">
+                        <option value="30">30 Minutes</option>
+                        <option value="45">45 Minutes</option>
+                        <option value="60">60 Minutes</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" id="btn-submit-custom-request" class="btn btn-secondary btn-block">
+                    <i class="fa-solid fa-paper-plane"></i> Send Custom Request
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- List of bookings -->
+            <div class="card glass">
+              <div class="card-header">
+                <h2><i class="fa-solid fa-clock-rotate-left"></i> Your Booked Appointments</h2>
+                <p>Manage your pending, confirmed, or cancelled appointments</p>
+              </div>
+              <div class="appointment-list-wrapper">
+                <div id="student-appointments-list" class="appointments-list">
+                  <!-- Dynamic appointments populate here -->
+                  <div class="empty-state">
+                    <i class="fa-solid fa-calendar-xmark"></i>
+                    <p>No appointments booked yet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+          <!-- Column 2: Dashboard Summary & Status Info -->
+          <div class="flex-column gap-lg">
+            <div class="card glass status-summary-card">
+              <h3>Appointment Guidelines</h3>
+              <ul class="guideline-list">
+                <li><span class="bullet amber"></span> <strong>Pending:</strong> Appointment is booked and awaiting professor's confirmation.</li>
+                <li><span class="bullet green"></span> <strong>Confirmed:</strong> Professor has approved your slot. Attend at the scheduled time.</li>
+                <li><span class="bullet red"></span> <strong>Cancelled:</strong> Appointment has been cancelled by you or the professor. The slot becomes available again.</li>
+                <li><span class="bullet blue"></span> <strong>Rescheduling:</strong> When you reschedule, your appointment resets to <strong>Pending</strong> for professor approval.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PROFESSOR DASHBOARD VIEW -->
+      <section id="view-professor" class="dashboard-section hide">
+        <div class="grid grid-2">
+          
+          <!-- Column 1: Manage Availability -->
+          <div class="card glass">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-calendar-plus"></i> Set Availability Slots</h2>
+              <p>Add new dates and times when you are free to consult</p>
+            </div>
+            
+            <form id="form-availability" class="form-horizontal">
+              <div class="grid grid-2 compact">
+                <div class="form-group">
+                  <label for="slot-date">Date</label>
+                  <div class="input-wrapper">
+                    <i class="fa-solid fa-calendar-day input-icon"></i>
+                    <input type="date" id="slot-date" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="slot-time">Start Time</label>
+                  <div class="input-wrapper">
+                    <i class="fa-solid fa-clock input-icon"></i>
+                    <input type="time" id="slot-time" required>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="slot-duration">Duration</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-hourglass-half input-icon"></i>
+                  <select id="slot-duration">
+                    <option value="30">30 Minutes</option>
+                    <option value="45">45 Minutes</option>
+                    <option value="60">60 Minutes</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" id="btn-add-slot" class="btn btn-primary btn-block">
+                <i class="fa-solid fa-plus"></i> Add Availability Slot
+              </button>
+            </form>
+
+            <!-- Current Availability list -->
+            <div class="current-availability-wrapper">
+              <h3>Your Current Slots</h3>
+              <div id="professor-slots-list" class="slots-list-compact">
+                <!-- Dynamic slots populate here -->
+                <div class="empty-state-compact">
+                  <p>No availability slots set. Use the form above to add slots.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Manage Appointments -->
+          <div class="card glass">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-bell"></i> Incoming Bookings & Requests</h2>
+              <p>Approve or cancel appointment requests from students</p>
+            </div>
+            <div class="appointment-list-wrapper">
+              <div id="professor-appointments-list" class="appointments-list">
+                <!-- Dynamic student requests populate here -->
+                <div class="empty-state">
+                  <i class="fa-solid fa-inbox"></i>
+                  <p>No incoming appointment requests.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- RESCHEDULE OVERLAY MODAL -->
+      <div id="modal-reschedule" class="modal-overlay hide">
+        <div class="modal glass">
+          <div class="modal-header">
+            <h3><i class="fa-solid fa-clock"></i> Reschedule Appointment</h3>
+            <button id="btn-modal-close" class="modal-close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>Select a new available slot from the professor's schedule:</p>
+            <div id="modal-slots-grid" class="slots-grid">
+              <!-- Slots populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2026 College Appointment System. Built with Express + Mongoose + JWT</p>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,9 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const Availability = require("../models/Availability");
+const { authenticateToken, requireRole } = require("../middleware/auth");
 
-router.post("/", async (req, res) => {
-  const { professorId, slots } = req.body;
+// Only professors can set availability
+router.post("/", authenticateToken, requireRole("professor"), async (req, res) => {
+  const professorId = req.user.id;
+  const { slots } = req.body;
+
+  if (!slots || !Array.isArray(slots)) {
+    return res.status(400).json({ message: "Slots must be an array" });
+  }
 
   try {
     let availability = await Availability.findOne({ professorId });
@@ -18,11 +25,12 @@ router.post("/", async (req, res) => {
 
     res.status(200).json({ message: "Availability saved", availability });
   } catch (err) {
-    res.status(500).json({ message: "Error saving availability", error: err });
+    res.status(500).json({ message: "Error saving availability", error: err.message });
   }
 });
 
-router.get("/:professorId", async (req, res) => {
+// Any authenticated user can check a professor's availability
+router.get("/:professorId", authenticateToken, async (req, res) => {
   const { professorId } = req.params;
 
   try {
@@ -34,7 +42,7 @@ router.get("/:professorId", async (req, res) => {
 
     res.status(200).json(availability.slots);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching availability", error: err });
+    res.status(500).json({ message: "Error fetching availability", error: err.message });
   }
 });
 
