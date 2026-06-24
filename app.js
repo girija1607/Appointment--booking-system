@@ -1,3 +1,4 @@
+require('dotenv').config();
 console.log("GIRIJA TEST 123");
 const express = require('express');
 const mongoose = require('mongoose');
@@ -5,6 +6,7 @@ const bodyParser = require('body-parser');
 const authRoute = require("./routes/auth");
 const availabilityRoute = require("./routes/availability");
 const appointmentRoute = require("./routes/appointment");
+
 
 const app = express();
 
@@ -177,10 +179,11 @@ function enableMockMode() {
 
 console.log("APP FILE RUNNING");
 
-mongoose.connect(
-  "mongodb://girijasinghal1607_db_user:6NShJnsnkJaNzqP2@ac-ckmgeip-shard-00-00.qfbwu49.mongodb.net:27017,ac-ckmgeip-shard-00-01.qfbwu49.mongodb.net:27017,ac-ckmgeip-shard-00-02.qfbwu49.mongodb.net:27017/test?ssl=true&authSource=admin&retryWrites=true&w=majority",
-  { serverSelectionTimeoutMS: 5000 }
-)
+
+const mongoURI = process.env.MONGODB_URI || "mongodb://girijasinghal1607_db_user:6NShJnsnkJaNzqP2@ac-ckmgeip-shard-00-00.qfbwu49.mongodb.net:27017,ac-ckmgeip-shard-00-01.qfbwu49.mongodb.net:27017,ac-ckmgeip-shard-00-02.qfbwu49.mongodb.net:27017/test?ssl=true&authSource=admin&retryWrites=true&w=majority";
+
+mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 5000 })
+
   .then(() => {
     console.log("✅ MongoDB Connected");
   })
@@ -189,6 +192,7 @@ mongoose.connect(
     enableMockMode();
   });
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
