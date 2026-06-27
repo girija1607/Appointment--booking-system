@@ -185,7 +185,9 @@ router.patch("/:id/reschedule", authenticateToken, requireRole("student"), async
 // Get student's appointments
 router.get("/student", authenticateToken, requireRole("student"), async (req, res) => {
   try {
-    const appointments = await Appointment.find({ studentId: req.user.id });
+    const appointments = await Appointment.find({ studentId: req.user.id })
+      .populate("studentId", "username")
+      .populate("professorId", "username");
     res.status(200).json(appointments);
   } catch (err) {
     res.status(500).json({ message: "Error fetching appointments", error: err.message });
@@ -195,7 +197,9 @@ router.get("/student", authenticateToken, requireRole("student"), async (req, re
 // Get professor's appointments
 router.get("/professor", authenticateToken, requireRole("professor"), async (req, res) => {
   try {
-    const appointments = await Appointment.find({ professorId: req.user.id });
+    const appointments = await Appointment.find({ professorId: req.user.id })
+      .populate("studentId", "username")
+      .populate("professorId", "username");
     res.status(200).json(appointments);
   } catch (err) {
     res.status(500).json({ message: "Error fetching appointments", error: err.message });
